@@ -2,6 +2,7 @@
 Simple graph implementation
 """
 from util import Stack, Queue  # These may come in handy
+import collections
 
 class Graph:
 
@@ -190,37 +191,24 @@ class Graph:
 
         This should be done using recursion.
         """
-        if seen == None:
-
-            # seen is empty so we need to make a set
+        if seen is None:
             seen = set()
+            path = collections.deque([])
+            path.append([starting_vertex])
 
-        if path == None:
+        seen.add(starting_vertex)
+        current = path.pop()
+        last = current[-1]
 
-            # path is empty so we make a list
-            path = list()
+        for last in self.get_neighbors(last):
+            if last not in seen:
+                route = list(current)
+                route.append(last)
+                path.append(route)
+                if last is destination_vertex:
+                    return route
 
-        # Work with what we haven't seen
-        if starting_vertex not in seen:
-            seen.add(starting_vertex)
-            path.append(starting_vertex)
-
-        # if the starting vertix is our destination; return path
-        if starting_vertex == destination_vertex:
-            return path
-
-        # If not get neighbors
-        neighbors = self.get_neighbors(starting_vertex)
-
-        
-        for neighbor in neighbors:
-            if neighbor not in seen:
-                neighborpath = self.dfs_recursive(neighbor, destination_vertex, seen, path)
-
-                if neighborpath is not None:
-                    return neighborpath
-
-        return None
+        return self.dfs_recursive(last, destination_vertex, seen, path)
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
